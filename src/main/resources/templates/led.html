@@ -1,0 +1,195 @@
+<!DOCTYPE html>
+<html lang="en" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8" />
+    <title>Virual LED</title>
+    <link rel="stylesheet" type="text/css" href="../static/lib/LEDStrip/ledstrip.css" th:href="@{/lib/LEDStrip/ledstrip.css}" />
+    <script type="text/javascript" src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.10.1/jquery.js"></script>
+    <script type="text/javascript" src="../static/lib/LEDStrip/rAF.js" th:src="@{/lib/LEDStrip/rAF.js}"></script>
+    <script type="text/javascript" src="../static/lib/LEDStrip/ledstrip.js" th:src="@{/lib/LEDStrip/ledstrip.js}"></script>
+    <script type="text/javascript" src="../static/lib/LEDStrip/ws2812.js" th:src="@{/lib/LEDStrip/ws2812.js}"></script>
+    <script type="text/javascript" src="../static/lib/LEDStrip/arduino_funcs.js" th:src="@{/lib/LEDStrip/arduino_funcs.js}"></script>
+    <script type="text/javascript" src="../static/lib/LEDStrip/larson.js" th:src="@{/lib/LEDStrip/larson.js}"></script>
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/color_wave.js" th:src="@{/lib/LEDStrip/color_wave.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/water_torture.js" th:src="@{/lib/LEDStrip/water_torture.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/chasers.js" th:src="@{/lib/LEDStrip//chasers.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/bouncingballs.js" th:src="@{/lib/LEDStrip/bouncingballs.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/lightning.js" th:src="@{/lib/LEDStrip/lightning.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/twinklesparkle.js" th:src="@{/lib/LEDStrip/twinklesparkle.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/fire.js" th:src="@{/lib/LEDStrip/fire.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/lib/LEDStrip/eyeblink.js" th:src="@{/lib/LEDStrip/eyeblink.js}"></script>-->
+    <script type="text/javascript">
+        //global
+        var animation, strip;
+
+        var color_red, color_blue, color_green;
+
+        $(document).ready(function(){
+            var container = $('.ledstrip')[0];
+            var colors = [
+                [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0], [0,0,0]
+            ];
+            var size = colors.length;
+
+            /**
+             * Set colors, and send to strip using chaining.
+             */
+            strip = LEDstrip(container, size) // Initialize
+                .setcolors(colors)  // chain commands
+                .send();
+
+
+
+
+            function setAll(r,g,b) {
+                console.log("set all pixels to "+r+","+g+","+b);
+                colors.forEach(function(val,idx){ // fiddle with colors
+                    colors[idx][0] = r; //r
+                    colors[idx][1] = g; //g
+                    colors[idx][2] = b; //b
+                });
+                strip.buffer = colors; // set the color buffer directly
+                strip.send();
+            }
+
+
+
+
+            $('#diffuser').change(function(e) {
+                $('.ledstrip').toggleClass('diffuse');
+
+            });
+
+
+            var runningAnimation = false;
+            var animationPos = 0;
+            var animationDirection = 1;
+            function runAnimation() {
+                console.log("run animation");
+                runningAnimation = true;
+                driver = new Larson(strip);
+                driver.init();
+                //Load Larson parameters:
+                driver.position = animationPos;
+                driver.direction = animationDirection;
+
+                //Start
+                animation = driver.animate.bind(driver)();
+
+
+//                runningAnimation = true;
+//                animation = requestAnimationFrame(animate);
+//                if(i == size) i = 0; //go to led stripe start
+//                /* generate random rgb values */
+//                var r = Math.floor(Math.random() * 255);
+//                var g = Math.floor(Math.random() * 255);
+//                var b = Math.floor(Math.random() * 255);
+//
+//                strip.buffer[i++] = [r, g, b];
+//                strip.send();
+//                console.log(i+": r "+r+" g "+g+" b "+b);
+            }
+
+            function stopAnimation(r,g,b) {
+                console.log("stop animation");
+                runningAnimation = false;
+
+                //save Larson parameters
+                animationPos = driver.position;
+                animationDirection = driver.direction;
+
+                cancelAnimationFrame(animation);
+                setAll(r,g,b);
+            }
+
+            $.blink = function(r,g,b,time) {
+                console.log("blink led");
+                if(runningAnimation)
+                    stopAnimation(r,g,b);
+                else
+                    setAll(r,g,b);
+
+                console.log("resume animation in "+time+"ms");
+                setTimeout(function() {
+                    runAnimation();
+                }, time);
+            };
+
+
+
+            $('#run-animation').click(function (e) {
+                console.log("run requested");
+                if(!runningAnimation)
+                    runAnimation();
+            });
+            $('#stop-animation').click(function (e) {
+                console.log("stop requested");
+                if(runningAnimation)
+                    stopAnimation(0,0,0);
+            });
+            $('#trigger-event').click(function (e) {
+                $.blink(0,0,255,300);
+            });
+        });
+
+    </script>
+    <script>
+
+        function processEffect(effect) {
+            console.log("external effect received");
+            if(effect.name == "empty")
+                return;
+            else if(effect.name == "blink") {
+                $.blink(effect.color.red,effect.color.green,effect.color.blue,effect.time);
+            } else {
+                console.log("Unkown effect: "+effect.name);
+            }
+        }
+
+        var led_color = function () {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "http://localhost:8080/led/getcolor",
+                success: function(data){
+                    console.log(data);
+                    color_blue = data.blue;
+                    color_green = data.green;
+                    color_red = data.red;
+                }
+            });
+        };
+
+        var led_effect = function () {
+            $.ajax({
+                type: "GET",
+                dataType: "json",
+                url: "http://localhost:8080/led/effect/consume",
+                success: function(data, status, xhr){
+                    processEffect(data);
+                },
+                error: function (e) {
+                    console.log(e);
+                }
+            });
+        };
+        setInterval(led_effect, 1000);
+    </script>
+</head>
+<body>
+<div style="display: inline-table; width: 100%">
+    <div class="ledstrip"></div>
+</div>
+<div style="width: 100%">
+    <h4>Settings</h4>
+    <form>
+        <input type="checkbox" id="diffuser" value="0" /> <label for="diffuser">Diffuser</label><br/>
+    </form>
+    <ul>
+        <li><a href="#" id="run-animation">run animation</a></li>
+        <li><a href="#" id="stop-animation">stop animation</a></li>
+        <li><a href="#" id="trigger-event">trigger event</a></li>
+    </ul>
+</div>
+</body>
+</html>
