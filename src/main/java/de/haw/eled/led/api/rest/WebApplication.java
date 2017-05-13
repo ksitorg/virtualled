@@ -1,4 +1,4 @@
-package de.haw.eled.virtualled;
+package de.haw.eled.led.api.rest;
 
 import org.springframework.boot.SpringApplication;
 import org.springframework.boot.autoconfigure.SpringBootApplication;

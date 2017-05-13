@@ -10,14 +10,14 @@
     <script type="text/javascript" src="../static/lib/LEDStrip/ws2812.js" th:src="@{/lib/LEDStrip/ws2812.js}"></script>
     <script type="text/javascript" src="../static/lib/LEDStrip/arduino_funcs.js" th:src="@{/lib/LEDStrip/arduino_funcs.js}"></script>
     <script type="text/javascript" src="../static/lib/LEDStrip/larson.js" th:src="@{/lib/LEDStrip/larson.js}"></script>
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/color_wave.js" th:src="@{/lib/LEDStrip/color_wave.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/water_torture.js" th:src="@{/lib/LEDStrip/water_torture.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/chasers.js" th:src="@{/lib/LEDStrip//chasers.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/bouncingballs.js" th:src="@{/lib/LEDStrip/bouncingballs.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/lightning.js" th:src="@{/lib/LEDStrip/lightning.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/twinklesparkle.js" th:src="@{/lib/LEDStrip/twinklesparkle.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/fire.js" th:src="@{/lib/LEDStrip/fire.js}"></script>-->
-    <!--<script type="text/javascript" src="../static/lib/LEDStrip/eyeblink.js" th:src="@{/lib/LEDStrip/eyeblink.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/color_wave.js" th:src="@{/LEDtrip/color_wave.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/water_torture.js" th:src="@{/LEDtrip/water_torture.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/chasers.js" th:src="@{/LEDtrip//chasers.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/bouncingballs.js" th:src="@{/LEDtrip/bouncingballs.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/lightning.js" th:src="@{/LEDtrip/lightning.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/twinklesparkle.js" th:src="@{/LEDtrip/twinklesparkle.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/fire.js" th:src="@{/LEDtrip/fire.js}"></script>-->
+    <!--<script type="text/javascript" src="../static/LEDtrip/eyeblink.js" th:src="@{/LEDtrip/eyeblink.js}"></script>-->
     <script type="text/javascript">
         //global
         var animation, strip;
@@ -79,7 +79,7 @@
 
 //                runningAnimation = true;
 //                animation = requestAnimationFrame(animate);
-//                if(i == size) i = 0; //go to led stripe start
+//                if(i == size) i = 0; //go to ledImpl stripe start
 //                /* generate random rgb values */
 //                var r = Math.floor(Math.random() * 255);
 //                var g = Math.floor(Math.random() * 255);
@@ -103,7 +103,7 @@
             }
 
             $.blink = function(r,g,b,time) {
-                console.log("blink led");
+                console.log("blink ledImpl");
                 if(runningAnimation)
                     stopAnimation(r,g,b);
                 else
@@ -150,7 +150,7 @@
             $.ajax({
                 type: "GET",
                 dataType: "json",
-                url: "http://localhost:8080/led/getcolor",
+                url: "http://localhost:8080/ledImpl/getcolor",
                 success: function(data){
                     console.log(data);
                     color_blue = data.blue;
@@ -164,7 +164,7 @@
             $.ajax({
                 type: "GET",
                 dataType: "json",
-                url: "http://localhost:8080/led/effect/consume",
+                url: "http://localhost:8080/ledImpl/effect/consume",
                 success: function(data, status, xhr){
                     processEffect(data);
                 },
